@@ -1,0 +1,9 @@
+services:
+  awesome-todo-mcp:
+    build: .
+    environment:
+      - SERVER_PORT=3000 # Port used by Server inside container
+    ports:
+      - "3000:3000" # Hostport:SERVER_PORT
+    volumes:
+      - path/to/your/todo/json:/data # <-- CHANGE THIS
