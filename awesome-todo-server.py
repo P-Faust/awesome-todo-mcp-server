@@ -423,6 +423,29 @@ def archive_completed_tasks() -> str:
     return f"Archived {len(completed_tasks)} completed tasks."
 
 
+@mcp.tool()
+def view_archived_tasks() -> List[Task]:
+    """View all archived tasks.
+
+    This tool reads the archived tasks from the `todo_archive.json` file
+    and returns them as a list.
+
+    Returns:
+        A list of ``Task`` models representing the archived tasks.
+    """
+    archive_path = os.path.join(os.path.dirname(DATA_PATH), "todo_archive.json")
+    if not os.path.exists(archive_path):
+        return []
+    try:
+        with open(archive_path, "r", encoding="utf-8") as f:
+            archived_tasks = json.load(f)
+        if isinstance(archived_tasks, list):
+            return [Task(**t) for t in archived_tasks]
+        return []
+    except (json.JSONDecodeError, FileNotFoundError):
+        return []
+
+
 ###############################################################################
 # Entry point
 #
