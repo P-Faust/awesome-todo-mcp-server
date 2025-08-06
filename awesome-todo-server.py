@@ -384,6 +384,45 @@ def mark_task_completed(task_id: int) -> str:
     return f"Task {task_id} not found."
 
 
+@mcp.tool()
+def archive_completed_tasks() -> str:
+    """Archive all completed tasks.
+
+    This tool moves all tasks marked as 'completed' from the active
+    todos.json file to a separate todo_archiv.json file. This helps
+    to keep the active task list clean and focused on pending items.
+
+    Returns:
+        A string confirming the number of tasks that were archived.
+    """
+    tasks = _load_tasks()
+    completed_tasks = [t for t in tasks if t.get("completed")]
+    incomplete_tasks = [t for t in tasks if not t.get("completed")]
+
+    if not completed_tasks:
+        return "No completed tasks to archive."
+
+    # Save the incomplete tasks back to the main file
+    _save_tasks(incomplete_tasks)
+
+    # Append completed tasks to the archive file
+    archive_path = os.path.join(os.path.dirname(DATA_PATH), "todo_archive.json")
+    archived_tasks = []
+    if os.path.exists(archive_path):
+        with open(archive_path, "r", encoding="utf-8") as f:
+            try:
+                archived_tasks = json.load(f)
+            except json.JSONDecodeError:
+                archived_tasks = []
+
+    archived_tasks.extend(completed_tasks)
+
+    with open(archive_path, "w", encoding="utf-8") as f:
+        json.dump(archived_tasks, f, indent=2, default=str)
+
+    return f"Archived {len(completed_tasks)} completed tasks."
+
+
 ###############################################################################
 # Entry point
 #
