@@ -154,11 +154,27 @@ mcp = FastMCP(name="Todo Server")
 # the SDK documentation: it is arbitrary but should be descriptive.
 ###############################################################################
 
-@mcp.resource("todos://list")
+# @mcp.resource("todos://list")
+# def list_tasks() -> List[Task]:
+#     """Return the current list of tasks.
+# 
+#     This resource loads the raw JSON data and converts each entry into a
+#     ``Task`` model. MCP will automatically serialise the list of Pydantic
+#     objects into a structured response for the LLM client.
+#     """
+#     raw = _load_tasks()
+#     return [Task(**t) for t in raw]
+#
+# The following tool is a temporary replacement for the resource above to
+# ensure compatibility with clients that do not yet support MCP resources,
+# such as the Gemini CLI. It will be removed once resource support is
+# more widely available, ensuring full compatibility with clients like
+# Claude Code.
+@mcp.tool()
 def list_tasks() -> List[Task]:
     """Return the current list of tasks.
 
-    This resource loads the raw JSON data and converts each entry into a
+    This tool loads the raw JSON data and converts each entry into a
     ``Task`` model. MCP will automatically serialise the list of Pydantic
     objects into a structured response for the LLM client.
     """
